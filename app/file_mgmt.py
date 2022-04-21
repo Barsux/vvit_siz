@@ -1,6 +1,6 @@
 #Файловый менеджер, скорее всего он будет работать в отдельном потоке, хранить файлы, удалять их
 #после истечения срока годности.
-import time, queue, os
+import time, os
 
 HOUR = 3600
 trackfiles = []
@@ -16,17 +16,12 @@ class UploadedFile:
         os.remove(self.tracked_path)
         os.remove(self.path)
 
-def is_tracked(filename):
-    for trackfile in trackfiles:
-        if trackfile.filename == filename and trackfile.detected:
-            return True
-    return False
 
 
-def loop(self):
+def loop():
     timestamp = time.time()
-    for module_index in len(self.trackfiles):
-        file = self.trackfiles[module_index]
+    for module_index in len(trackfiles):
+        file = trackfiles[module_index]
         if file.shelf_life <= timestamp:
-            self.trackfiles.remove(file)
+            trackfiles.remove(file)
 
