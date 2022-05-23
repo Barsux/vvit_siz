@@ -17,10 +17,25 @@
 #Требуется >= Python3.9
 #Чтобы запустить этот огрызок:
     - Клонируем репозиторй по HTTP(s)/SSH
-    - Подготавливаем виртуальное окружение ,далее все команды выполняем в консоли, открытой в папке проекта
-        - Создаём venv:                 (Для винды) python -m venv env"                 /   (Для линукса) python3 -m venv env"
-        - Активируем venv:              (Для винды) env\scripts\activate.bat"           /   (Для линукса) source env/bin/activate"
-        - Устанавливаем зависимости:    (Для винды) pip install -r requirements.txt"    /   (Для линукса) pip3 install requirements.txt"
-        - Готово! Зависимости установлены
+    - Устанавливаем зависимости:
+    На винде:
+    ```bash
+        $ python -m venv env
+        $ env\scripts\activate.bat
+        $ pip install -r requirements.txt
+    ```
+    На линуксе:
+    ```bash
+        $ python3 -m venv env
+        $ source env/bin/activate
+        $ pip3 install requirements.txt
+    ```
     - Запуск программы пока выполняется командой:
-                                        (Для винды) python app.py                       /   (Для линукса) python3 app.py  
+    На винде:
+    ```bash
+        $ python app.py
+    ```
+    На линуксе:
+    ```bash
+        $ python3 app.py
+    ```
