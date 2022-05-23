@@ -15,27 +15,33 @@
     - Детектор
 
 ##Требуется >= Python3.9
-Чтобы запустить этот огрызок:
+
+##Чтобы запустить этот огрызок:
     - Клонируем репозиторй по HTTP(s)/SSH
     - Устанавливаем зависимости:
+
 ##На винде:
-```cmd
-    python -m venv env
-    env\scripts\activate.bat
-    pip install -r requirements.txt
+```
+python -m venv env
+env\scripts\activate.bat
+pip install -r requirements.txt
+```
+
+##На линуксе:
+```
+$ python3 -m venv env
+$ source env/bin/activate
+$ pip3 install requirements.txt
+```
+
+##Запуск программы пока выполняется командой:
+
+##На винде:
+```
+python app.py
 ```
 ##На линуксе:
-```bash
-    $ python3 -m venv env
-    $ source env/bin/activate
-    $ pip3 install requirements.txt
+
 ```
-##Запуск программы пока выполняется командой:
-На винде:
-```cmd
-        python app.py
-```
-На линуксе:
-```bash
-    $ python3 app.py
+$ python3 app.py
 ```
