@@ -60,7 +60,7 @@ def run(
         iou_thres=0.45,  # NMS IOU threshold
         max_det=1000,  # maximum detections per image
         device='',  # cuda device, i.e. 0 or 0,1,2,3 or cpu
-        run_stream=True,
+        run_stream=False,
         save_vid=True,
         classes=None,  # filter by class: --class 0, or --class 0 2 3
         project=ROOT / 'runs/detect',  # save results to project/name

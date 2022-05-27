@@ -18,7 +18,7 @@ def upload():
         else:
             new_filename_path = f"{app.config['UPLOADED_PATH']}/{new_filename}"
         f.save(os.path.join(app.config['UPLOADED_PATH'], new_filename))
-        Thread(target=run, args=(app.config["WEIGHTS_PATH"], new_filename_path, new_filename, False)).start()
+        Thread(target=run, args=(app.config["WEIGHTS_PATH"], new_filename_path, new_filename, False, True)).start()
         return redirect(url_for("show", filename = new_filename, code=307))
     return render_template('index.html')
 
