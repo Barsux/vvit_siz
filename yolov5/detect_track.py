@@ -46,6 +46,7 @@ def run_gst_pipeline(filename):
     print(pipeline)
     os.system(pipeline)
 
+
 @torch.no_grad()
 def run(
         weights,  # model.pt path(s)
@@ -59,19 +60,13 @@ def run(
         max_det=1000,  # maximum detections per image
         device='',  # cuda device, i.e. 0 or 0,1,2,3 or cpu
         run_stream=True,
-        view_img=False,  # show results
         save_vid=True,
         classes=None,  # filter by class: --class 0, or --class 0 2 3
-        agnostic_nms=False,  # class-agnostic NMS
-        augment=False,  # augmented inference
-        visualize=False,  # visualize features
         project=ROOT / 'runs/detect',  # save results to project/name
         name='exp',  # save results to project/name
         exist_ok=False,  # existing project/name ok, do not increment
-        line_thickness=3,  # bounding box thickness (pixels)
-        hide_labels=False,  # hide labels
+        line_thickness=2,  # bounding box thickness (pixels)
         hide_conf=False,  # hide confidences
-        half=False,  # use FP16 half-precision inference
         debug=True,
         dnn=False,  # use OpenCV DNN for ONNX inference
         config_deepsort=ROOT / "deep_sort_pytorch/configs/deep_sort.yaml"  # Deep Sort configuration
@@ -86,7 +81,7 @@ def run(
     fps, frames, resolution = get_resolution(source)
     out_cap = cv2.VideoWriter(f"tracked/{filename}", 0x7634706d, fps, resolution)
 
-    ## initialize deepsort
+    #Инициировать Глубокую сортировку
     cfg = get_config()
     cfg.merge_from_file(config_deepsort)
     deepsort = DeepSort(cfg.DEEPSORT.REID_CKPT,
@@ -95,20 +90,20 @@ def run(
                         max_age=cfg.DEEPSORT.MAX_AGE, n_init=cfg.DEEPSORT.N_INIT, nn_budget=cfg.DEEPSORT.NN_BUDGET,
                         use_cuda=True)
 
-    # Directories
+    #Папки
     save_dir = increment_path(Path(project) / name, exist_ok=exist_ok)  # increment run
     save_dir.mkdir(parents=True, exist_ok=True)  # make dir
 
-    # Load model
+    #Загрузить модель
     device = select_device(device)
-    model = DetectMultiBackend(weights, device=device, dnn=dnn, data=data, fp16=half)
+    model = DetectMultiBackend(weights, device=device, dnn=dnn, data=data, fp16=False)
     stride, names, pt = model.stride, model.names, model.pt
     imgsz = check_img_size(imgsz, s=stride)  # check image size
     dataset = LoadImages(source, img_size=imgsz, stride=stride, auto=pt)
     bs = 1  # batch_size
 
-    # Run inference
-    model.warmup(imgsz=(1 if pt else bs, 3, *imgsz))  # warmup
+    #Запустить детектор
+    model.warmup(imgsz=(1 if pt else bs, 3, *imgsz))  #Разминка
     dt, seen = [0.0, 0.0, 0.0], 0
     frame_idx = 0
     time_begin = time_sync()
@@ -124,14 +119,12 @@ def run(
         t2 = time_sync()
         dt[0] += t2 - t1
 
-        # Inference
-        visualize = increment_path(save_dir / Path(path).stem, mkdir=True) if visualize else False
-        pred = model(im, augment=augment, visualize=visualize)
         t3 = time_sync()
         dt[1] += t3 - t2
 
+        pred = model(im, augment=False, visualize=False)
         # NMS
-        pred = non_max_suppression(pred, conf_thres, iou_thres, classes, agnostic_nms, max_det=max_det)
+        pred = non_max_suppression(pred, conf_thres, iou_thres, classes, False, max_det=max_det)
         dt[2] += time_sync() - t3
 
         frame_idx = frame_idx + 1
@@ -156,10 +149,9 @@ def run(
                     n = (det[:, -1] == c).sum()  # detections per class
                     s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
 
-                ##variables for boundig boxes
                 bbox_xywh = []
                 confs = []
-                ## Adapt detections to deep sort input format
+                #Переделать результаты йолы под глубокую сортировку
                 for *xyxy, conf, cls in det:
                     x_c, y_c, bbox_w, bbox_h = bbox_rel(*xyxy)
                     obj = [x_c, y_c, bbox_w, bbox_h]
@@ -169,31 +161,29 @@ def run(
                 xywhs = torch.Tensor(bbox_xywh)
                 confss = torch.Tensor(confs)
 
-                # Pass detections to deepsort
+                #Передать детекции в глубокую сортировку
                 outputs = deepsort.update(xywhs, confss, im0)
 
-                # draw boxes for visualization
+                #Отрисовать результаты глубокой сортировки
                 if len(outputs) > 0:
                     bbox_xyxy = outputs[:, :4]
                     identities = outputs[:, -1]
                     draw_boxes(im0, bbox_xyxy, identities)  # call function to draw seperate object identity
 
                 annotator = Annotator(im0, line_width=line_thickness, example=str(names))
-                # yolo write detection result
-                # Write results
+                #Нарисовать детекцию от йолы
                 for *xyxy, conf, cls in reversed(det):
                     if save_vid:
                         c = int(cls)
-                        label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
+                        label = (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
                         annotator.box_label(xyxy, label, color=colors(c, True))
 
             else:
                 deepsort.increment_ages()
             # Stream results
-            if view_img or run_stream:
+            if run_stream:
                 cv2.imshow(str(p), im0)
                 cv2.waitKey(1)  # 1 millisecond
-
             if save_vid:
                 out_cap.write(im0)
         frametime = t3 - t2
@@ -203,7 +193,6 @@ def run(
     time_end = time_sync()
     time_elapsed = time_end - time_begin
     time_per_frame = frametime_total / frames
-    #objects total
     print(f"Всего времени прошло : {time_elapsed:.3f}(секунды)")
     print(f"Среднее время трекинга за кадр {time_per_frame:.3f}(cекунды)")
     print(f"Всего объектов в видео : {objects_total}(объекта)")

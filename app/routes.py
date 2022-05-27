@@ -25,8 +25,3 @@ def upload():
 @app.route("/show/", methods = ["GET", "POST"])
 def show():
     return render_template("show.html")
-
-@app.route("/Testroute", methods = ["GET", "POST"])
-def testrt():
-    if request.method == "POST":
-        return redirect(url_for("show", filename="12451.mp4"))
