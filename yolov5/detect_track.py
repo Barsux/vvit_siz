@@ -3,8 +3,9 @@ import os
 import sys
 from threading import Thread
 from pathlib import Path
-
+from time import time
 import torch
+from yolov5.db_data import Data_db
 import torch.backends.cudnn as cudnn
 
 import cv2
@@ -46,13 +47,13 @@ def run_gst_pipeline(filename):
     print(pipeline)
     os.system(pipeline)
 
-
 @torch.no_grad()
 def run(
         weights,  # model.pt path(s)
         source,  # file/dir/URL/glob, 0 for webcam
         filename,
         run_gstream,
+        export_to_db,
         data=ROOT / 'data/coco128.yaml',  # dataset.yaml path
         imgsz=(640, 640),  # inference size (height, width)
         conf_thres=0.25,  # confidence threshold
@@ -106,26 +107,26 @@ def run(
     model.warmup(imgsz=(1 if pt else bs, 3, *imgsz))  #Разминка
     dt, seen = [0.0, 0.0, 0.0], 0
     frame_idx = 0
-    time_begin = time_sync()
+    time_begin = time()
     objects_total = 0
     frametime_total = 0.0
     for path, im, im0s, vid_cap, s in dataset:
-        t1 = time_sync()
+        t1 = time()
         im = torch.from_numpy(im).to(device)
         im = im.half() if model.fp16 else im.float()  # uint8 to fp16/32
         im /= 255  # 0 - 255 to 0.0 - 1.0
         if len(im.shape) == 3:
             im = im[None]  # expand for batch dim
-        t2 = time_sync()
+        t2 = time()
         dt[0] += t2 - t1
 
-        t3 = time_sync()
+        t3 = time()
         dt[1] += t3 - t2
 
         pred = model(im, augment=False, visualize=False)
         # NMS
         pred = non_max_suppression(pred, conf_thres, iou_thres, classes, False, max_det=max_det)
-        dt[2] += time_sync() - t3
+        dt[2] += time() - t3
 
         frame_idx = frame_idx + 1
         # Process predictions
@@ -141,7 +142,7 @@ def run(
             # check detected boxes, process them for deep sort
             if len(det):
                 objects_total += len(det)
-                # Rescale boxes from img_size to im0 size
+                # Поменять разрешение изображения до imgsize
                 det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()
 
                 # Print results
@@ -186,16 +187,20 @@ def run(
                 cv2.waitKey(1)  # 1 millisecond
             if save_vid:
                 out_cap.write(im0)
+
         frametime = t3 - t2
         LOGGER.info(f'{s}Done. ({frametime:.3f}s)')
         frametime_total += frametime
 
-    time_end = time_sync()
+    time_end = time()
     time_elapsed = time_end - time_begin
-    time_per_frame = frametime_total / frames
+    time_per_frame = float(f"{frametime_total / frames:0.9f}")
     print(f"Всего времени прошло : {time_elapsed:.3f}(секунды)")
-    print(f"Среднее время трекинга за кадр {time_per_frame:.3f}(cекунды)")
+    print(f"Среднее время трекинга за кадр {time_per_frame:0.9f}(cекунды)")
     print(f"Всего объектов в видео : {objects_total}(объекта)")
+    if export_to_db:
+        db = Data_db()
+        db.insert_data(time_begin, time_end, time_per_frame, objects_total)
     if run_gstream:
         Thread(target=run_gst_pipeline, args=(filename,)).start()
 
