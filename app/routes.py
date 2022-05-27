@@ -2,7 +2,7 @@ import os
 import uuid
 import time
 
-from app import app
+from app import app, WINDOWS
 from flask import render_template, flash, request, redirect, url_for
 from threading import Thread
 from yolov5.detect_track import run
@@ -13,9 +13,12 @@ def upload():
         f = request.files.get('file')
         file_ext = f.filename[f.filename.rfind('.'):]
         new_filename = uuid.uuid1().hex + file_ext
-        new_filename_path = f"{app.config['UPLOADED_PATH']}\\{new_filename}"
+        if WINDOWS:
+            new_filename_path = f"{app.config['UPLOADED_PATH']}\\{new_filename}"
+        else:
+            new_filename_path = f"{app.config['UPLOADED_PATH']}/{new_filename}"
         f.save(os.path.join(app.config['UPLOADED_PATH'], new_filename))
-        Thread(target=run, args=(app.config["WEIGHTS_PATH"], new_filename_path, new_filename)).start()
+        Thread(target=run, args=(app.config["WEIGHTS_PATH"], new_filename_path, new_filename, False)).start()
         return redirect(url_for("show", filename = new_filename, code=307))
     return render_template('index.html')
 

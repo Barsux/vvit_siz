@@ -1,7 +1,9 @@
 import os
+from sys import platform
 from flask_dropzone import Dropzone
-from flask import Flask, render_template, request
+from flask import Flask
 
+WINDOWS = (platform == "win32")
 WEIGHTS = "best.pt"
 UPLOAD_FOLDER = "uploads"
 if(not os.path.exists(UPLOAD_FOLDER)):
@@ -10,7 +12,11 @@ if(not os.path.exists(UPLOAD_FOLDER)):
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 #Откатил на одну директорию назад, почему-то оно ощущает себя здесь)
-basedir = basedir[:basedir.rfind('\\')]
+print(basedir)
+if WINDOWS:
+    basedir = basedir[:basedir.rfind('\\')]
+else:
+    basedir = basedir[:basedir.rfind('/')]
 print("Корневая директория:",basedir)
 
 app = Flask(__name__)
