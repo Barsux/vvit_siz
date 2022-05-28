@@ -19,7 +19,7 @@ $ docker stop имя_контейнера
 <img src="https://github.com/Barsux/vvit_siz/blob/main/examples/src/1.jpg"/>
 
 ### Добавтье файл с видео(Несколько готовых примеров находится в директории 'examples/')
-### Нажмите кнопку "Upload".
+### Нажмите кнопку "Upload file".
 <img src="https://github.com/Barsux/vvit_siz/blob/main/examples/src/2.jpg"/>
 
 ### Дождитесь галочки по завершению распознавания и нажмите на кнопку "Go to result"
