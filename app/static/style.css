@@ -54,6 +54,11 @@ span.x4:before, i.x4:before
     content:'\e0e9'
     }
 
+#video_stream {
+    text-align: center;
+
+}
+
 
 header .container-fluid
 {
