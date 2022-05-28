@@ -16,11 +16,10 @@ $ docker stop имя_контейнера
 ```
 # Использование
 ## Перейдите по ссылке http://127.0.0.1:8080/
-<img src="https://github.com/Barsux/vvit_siz/blob/main/examples/src/1.jpg">
+<img src="https://github.com/Barsux/vvit_siz/blob/main/examples/src/1.jpg"/>
 
+<img src="https://github.com/Barsux/vvit_siz/blob/main/examples/src/2.jpg"/>
 
-![alt text](https://github.com/Barsux/vvit_siz/tree/main/examples/src/2.jpg?raw=true)
+<img src="https://github.com/Barsux/vvit_siz/blob/main/examples/src/3.jpg"/>
 
-![alt text](https://github.com/Barsux/vvit_siz/tree/main/examples/src/3.jpg?raw=true)
-
-![alt text](https://github.com/Barsux/vvit_siz/tree/main/examples/src/4.jpg?raw=true)
+<img src="https://github.com/Barsux/vvit_siz/blob/main/examples/src/4.jpg"/>
