@@ -1,16 +1,15 @@
-FROM python:3.9-slim
+FROM restreamio/gstreamer:latest-dev
 
 WORKDIR /app
 
 COPY . /app
 
+RUN apt-get update
+RUN apt-get install libavcodec58 ffmpeg libsm6 libxext6 docker-compose -y
 RUN pip install -r requirements.txt
 
-RUN apt-get update
-RUN apt-get install ffmpeg libsm6 libxext6  -y
+EXPOSE 8080 8081 5432 5050
 
-
-EXPOSE 8080
-
+CMD ["docker-compose", "up", "-d", "docker-compose.yaml"]
 CMD ["python3", "app.py"]
 
