@@ -47,6 +47,14 @@ span.x4:before, i.x4:before
 	HEADER
 \*------------------------------------*/
 
+.typcn-social-github-circular:before{
+    content:'\e0e8'
+    }
+.typcn-social-github:before{
+    content:'\e0e9'
+    }
+
+
 header .container-fluid
 {
     background-repeat: no-repeat;

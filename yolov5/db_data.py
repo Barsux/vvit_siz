@@ -16,7 +16,8 @@ class Data_db:
             host="172.28.1.3",
             database="siz_db",
             user="chugun",
-            password="123456")
+            password="123456",
+            connect_timeout=5)
 
         self.cursor = self.conn.cursor()
         self.table_exists()
