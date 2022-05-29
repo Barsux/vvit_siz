@@ -30,8 +30,6 @@ else:
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-#Откатил на одну директорию назад, почему-то оно ощущает себя здесь)
-print(basedir)
 if WINDOWS:
     basedir = basedir[:basedir.rfind('\\')]
 else:
