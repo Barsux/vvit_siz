@@ -10,7 +10,7 @@ Last_video = None
 
 def run_gst_pipeline(filename):
     print("Running pipeline")
-    pipeline = f"gst-launch-1.0 filesrc location=tracked/{filename} ! qtdemux ! decodebin ! videoconvert ! videoscale ! theoraenc ! oggmux ! tcpserversink host=127.0.0.1 port=8081"
+    pipeline = f"gst-launch-1.0 filesrc location=tracked/{filename} ! qtdemux ! decodebin ! videoconvert ! videoscale ! theoraenc ! oggmux ! tcpserversink host=0.0.0.0 port=8081"
     print(pipeline)
     time.sleep(2)
     os.system(pipeline)
