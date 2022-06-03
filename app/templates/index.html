@@ -78,7 +78,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-3 col-xs-10">
-                            <a href="#" class="thumbnail logo">
+                            <a href="{{ url_for('upload') }}" class="thumbnail logo">
                                 <img src="{{ url_for('static', filename='images/your_logo.png') }}" alt="" class="img-responsive">
                             </a>
                         </div>
@@ -98,7 +98,7 @@
                         <div class="right_block">
                             <button id="upload-btn">Upload file</button>
                             <div style="clear:both; height: 20px;"></div>
-                            <form action="/show/" method="post">
+                            <form action="/show/{{Kostyl}}" method="post">
                                 <button id="download-btn" type="submit">Go to result</button>
                             </form>
                         </div>
