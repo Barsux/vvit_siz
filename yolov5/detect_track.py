@@ -38,6 +38,8 @@ def get_resolution(file):
         height = int(vcap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         fps = float(int(vcap.get(cv2.CAP_PROP_FPS)))
         frames = int(vcap.get(cv2.CAP_PROP_FRAME_COUNT))
+    else:
+        raise FileNotFoundError
     vcap.release()
     return (fps, frames ,(width, height))
 

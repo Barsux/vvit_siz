@@ -1,5 +1,5 @@
 import psycopg2
-#Демо
+# Демо
 from time import time, sleep
 
 AVG_FOR_FRAME = 0.913
@@ -8,7 +8,9 @@ STARTTIME = time()
 # print(STARTTIME)
 sleep(2)
 ENDTIME = time()
-#Демо кончается
+
+
+# Демо кончается
 
 class Data_db:
     def __init__(self):
@@ -17,6 +19,7 @@ class Data_db:
             database="siz_db",
             user="chugun",
             password="123456",
+            port=5432,
             connect_timeout=5)
 
         self.cursor = self.conn.cursor()
@@ -27,10 +30,10 @@ class Data_db:
 
     def table_exists(self):
         self.cursor.execute("select exists(select * from information_schema.tables where table_name=%s)",
-                       ('website_analysis',))
+                            ('website_analysis',))
         check_row = self.cursor.fetchone()[0]
 
-        if check_row == False:
+        if not check_row:
             self.cursor.execute('''create table website_analysis(id_check int GENERATED ALWAYS AS IDENTITY,
                                                             start_time numeric null,
                                                             end_time numeric null,
@@ -38,7 +41,8 @@ class Data_db:
                                                             number_of_detected_objects int null)''')
 
     def insert_data(self, starttime, endtime, avg_for_frame, objects_total):
-        SQL_Insert = f"INSERT INTO website_analysis (start_time, end_time, average_frame_processing_time, number_of_detected_objects) values ({starttime}, {endtime}, {avg_for_frame}, {objects_total});"
+        SQL_Insert = f"INSERT INTO website_analysis (start_time, end_time, average_frame_processing_time, " \
+                     f"number_of_detected_objects) values ({starttime}, {endtime}, {avg_for_frame}, {objects_total}); "
         self.cursor.execute(SQL_Insert)
         self.conn.commit()
         self.conn.close()
