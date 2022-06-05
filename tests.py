@@ -14,7 +14,7 @@ HOSTNAME = "http://127.0.0.1:8080"
 # Проверка доступности страниц
 def test_pages():
     root = requests.get(HOSTNAME)
-    show = requests.get(f"{HOSTNAME}/show")
+    show = requests.get(f"{HOSTNAME}/show/0")
     assert root.status_code == 200 and show.status_code == 200
 
 

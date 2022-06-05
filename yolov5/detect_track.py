@@ -203,8 +203,6 @@ def run(
     if export_to_db:
         db = Data_db()
         db.insert_data(time_begin, time_end, time_per_frame, objects_total)
-    if run_gstream:
-        Thread(target=run_gst_pipeline, args=(filename,)).start()
 
 
 def main(opt):

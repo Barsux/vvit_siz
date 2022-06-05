@@ -4,7 +4,7 @@ from flask_dropzone import Dropzone
 from flask import Flask
 
 # Константы
-DEBUG = True
+DEBUG = False
 WEIGHTS = "best.pt"
 UPLOAD_FOLDER = "uploads"
 TRACK_FOLDER = "tracked"
